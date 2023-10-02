@@ -1,12 +1,11 @@
 package org.example.user;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -14,13 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
 
-    private final InputStream originalIn = System.in;
     private final PrintStream originalOut = System.out;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 
-    @Mock
-    private EmailValidator emailValidator;
 
     @BeforeEach
     void setUp() {
@@ -168,37 +164,45 @@ class UserControllerTest {
   @Test
   @DisplayName("When Deposit to my account")
     void testDepositFromMyAccount(){
-      String input = "t4@gmail.com\npass4\n2\n5\n500\n5\n";
+      String input = "t4@gmail.com\npass4\n2\n1\n500\n5\n";
       System.setIn(new ByteArrayInputStream(input.getBytes()));
 
       ByteArrayOutputStream outContent = new ByteArrayOutputStream();
       System.setOut(new PrintStream(outContent));
 
       userController userController = new userController();
+      List<user> userList = new ArrayList<>();
+
+      userController.setUserList(userList);
+      account.setLastAssignedID(0);
       account account1 = new account("Savings",  1000.0);
-//      account account2 = new account("Current",  500.0);
 
 
       Set<account> accountSet = new HashSet<>();
       accountSet.add(account1);
       user user1 = new user("user4","t4@gmail.com","pass4",accountSet);
       account1.setAccountOwnerID(user1.getID());
+      userList.add(user1);
+      userController.setUserList(userList);
       userController.bankServices(user1);
       System.out.println("This message will be printed during the test.");
 
-      Optional<account> account =  user1.getAccountset().stream().filter(a->(a.getID()+"").equals(5+"")).findAny();
-      if(account.isPresent()){
-          account account3 = account.get();
+      Optional<account> accountTemp =  user1.getAccountset().stream().filter(a->(a.getID()+"").equals(1+"")).findAny();
+      if(accountTemp.isPresent()){
+//          account account3 = accountTemp.get();
+          account account3 = userController.getUserList().get(0).getAccountset().stream().findFirst().get();
+
+          String printedOutput = outContent.toString();
+        System.out.println("sssss"+printedOutput);
           assertEquals(1500,account3.getAccountBalance());
 
       }
-//      else {
-//          fail("noo");
-//      }
+      else {
+          fail("noo");
+      }
   }
     @Test
     @DisplayName("When Deposit to account not mine")
-
     void testDepositFromAccountNotMine(){
         String input = "t1@gmail.com\npass1\n2\n10\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
@@ -218,7 +222,6 @@ class UserControllerTest {
         System.setOut(new PrintStream(outContent));
 
         userController.bankServices(user1);
-        System.setOut(originalOut);
 
         assertFalse(user1.getAccountset().stream().anyMatch(a -> a.getID() == 10));
 
@@ -309,12 +312,10 @@ class UserControllerTest {
         Optional<account> account =  user1.getAccountset().stream().filter(a->(a.getID()+"").equals("5")).findAny();
         if(account.isPresent()){
             account account3 = account.get();
-            String printedOutput = outContent.toString();
-            assertAll(
-                    ()-> assertEquals(1000,account3.getAccountBalance())
-//                    ()-> assertTrue(printedOutput.contains("hhhhhhh"))
+//            String printedOutput = outContent.toString();
 
-            );
+            assertEquals(1000,account3.getAccountBalance());
+
 
 
         }
