@@ -2,15 +2,6 @@ package org.example.user;
 
 public class account {
   private String accountType;
-
-    public int getID() {
-        return ID;
-    }
-
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-
     private  int ID;
   private  int accountOwnerID;
   private double accountBalance;
@@ -20,6 +11,7 @@ public class account {
         this.accountType = accountType;
         this.accountBalance = accountBalance;
         this.ID = ++lastAssignedID;
+//        System.out.println(this.toString());
 
     }
 
@@ -28,6 +20,9 @@ public class account {
         this.accountOwnerID = accountOwnerID;
         this.accountBalance = accountBalance;
         this.ID = ++lastAssignedID;
+//        System.out.println(this.toString());
+
+
     }
 
     public String getAccountType() {
@@ -70,5 +65,12 @@ public class account {
 
     public static void setLastAssignedID(int lastAssignedID) {
         account.lastAssignedID = lastAssignedID;
+    }
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
     }
 }

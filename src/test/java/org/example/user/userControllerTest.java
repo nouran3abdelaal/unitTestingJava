@@ -243,12 +243,12 @@ class UserControllerTest {
         String printedOutput = outContent.toString();
         System.out.println(printedOutput);
         userController.bankServices(user1);
-        Optional<account> account = user1.getAccountset().stream().filter(a -> (a.getID() + "").equals("5" + "")).findAny();
+        Optional<account> account = user1.getAccountset().stream().filter(a -> (a.getID() + "").equals("5")).findAny();
         if (account.isPresent()) {
             account account3 = account.get();
             assertEquals(500, account3.getAccountBalance(), "yes");
         } else {
-            fail("kkkkkkkk");
+            fail();
         }
     }
 

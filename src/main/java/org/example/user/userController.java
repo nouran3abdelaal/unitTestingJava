@@ -18,7 +18,7 @@ public class userController {
         user user1 = new user("user1","t1@gmail.com","pass1",accountSet);
         account1.setAccountOwnerID(user1.getID());
         account2.setAccountOwnerID(user1.getID());
-        accountSet.clear();
+        accountSet = new HashSet<>();
         accountSet.add(account3);
         accountSet.add(account4);
         user user2 =  new user("user2","t2@gmail.com","pass2",accountSet);
@@ -108,9 +108,6 @@ public class userController {
             String ID = scanner.nextLine();
             Optional<account>account =  user.getAccountset().stream().filter(a->(a.getID()+"").equals(ID)).findAny();
             if(!account.isPresent()){
-//                System.out.println("hiiiiiiii");
-
-
                 System.out.println("You don't have an account with this ID please recheck and try again");
                 bankServices(user);
             }
@@ -125,6 +122,9 @@ public class userController {
                         System.out.println("here\n" +
                                 e.getAccountBalance());
                     }
+                });
+                user.getAccountset().forEach(account1 -> {
+                    System.out.println(account1.toString());
                 });
                 bankServices(user);
 
@@ -207,7 +207,6 @@ public class userController {
                 .findFirst();
 
         if (userOptional.isPresent()) {
-//            user user = userOptional.get();
             System.out.println("User already exits! \n" +
                     "Do you want to login instead? \n" +
                     "press Y or N:");
