@@ -1,7 +1,6 @@
 package org.example.user;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class userController {
     private List<user> userList;
