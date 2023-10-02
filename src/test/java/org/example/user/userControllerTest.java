@@ -29,7 +29,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Test with correct email and password")
+    @DisplayName("Test Log In with correct email and password")
     void testLoginValidUser() throws NotValidMailException {
         String input = "t1@gmail.com\npass1\n5\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
@@ -49,7 +49,7 @@ class UserControllerTest {
         String printedOutput = outContent.toString();
         assertTrue(printedOutput.contains("Welcome user1"));    }
     @Test
-    @DisplayName("Test with correct email and wrong password")
+    @DisplayName("Test Log In with correct email and wrong password")
     void testLoginCorrectEmailWrongPassword() throws NotValidMailException {
         String input = "t1@gmail.com\npass11\n5\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
@@ -69,7 +69,7 @@ class UserControllerTest {
         String printedOutput = outContent.toString();
         assertFalse(printedOutput.contains("Welcome user1"));    }
     @Test
-    @DisplayName("Test with wrong email and correct password")
+    @DisplayName("Test Log In with wrong email and correct password")
     void testLoginWrongEmailCorrectPassword() throws NotValidMailException {
         String input = "t11@gmail.com\npass1\n5\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
@@ -89,10 +89,9 @@ class UserControllerTest {
         String printedOutput = outContent.toString();
         assertFalse(printedOutput.contains("Welcome user1"));    }
     @Test
-    @DisplayName("Test with wrong email and wrong password")
-    void testLoginInvalidUserLogin() {
-        // Prepare test input
-        String input = "invalid-email\ninvalid-pass\n5\n";
+    @DisplayName("Test Log in with wrong email To throw exception")
+    void testLoginInvalidUser_ThrowException() {
+        String input = "invalid-email\nany_pass\n5\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -108,6 +107,7 @@ class UserControllerTest {
 
     }
     @Test
+    @DisplayName("Test signUp with correct email and password")
     void testSignUpValidUser() throws NotValidMailException {
         // Prepare test input
         String input = "t3@gmail.com\npass3\nUser3\nt3@gmail.com\npass3\n5\n";
@@ -115,22 +115,24 @@ class UserControllerTest {
         System.setIn(inputStream);
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
-        // Create an instance of UserController
         userController userController = new userController();
 
-        // Mock the user list
         List<user> userList = new ArrayList<>();
         userController.setUserList(userList);
 
         userController.signUp();
 
-        // Check the output
         String printedOutput = outContent.toString();
-        assertTrue(printedOutput.contains("Welcome User3"));
-        assertEquals(1,userController.getUserList().size());
+        assertAll(
+                ()->  assertTrue(printedOutput.contains("Welcome User3")),
+                ()-> assertEquals(1,userController.getUserList().size())
+
+        );
+
     }
     @Test
-    void testSignUpInvalidUserSignUp() {
+    @DisplayName("Test signUp with invalid email to throw Exception")
+    void testSignUpInvalidUserSignUpWithInvalidEmail() {
         // Prepare test input
         String input = "invalid-email\ninvalid-pass\nanyName\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
@@ -146,9 +148,10 @@ class UserControllerTest {
 
     }
     @Test
-    void testSignUpvalidUserSignUp() {
+    @DisplayName("Test signUp with correct email so no exception is thrown")
+    void testSignUpValidUserNotExceptionThrown() {
         // Prepare test input
-        String input = "t3@gmail.com\npass3\nUser3\nt3@gmail.com\npass3\n";
+        String input = "t3@gmail.com\npass3\nUser3\nt3@gmail.com\npass3\n5\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
