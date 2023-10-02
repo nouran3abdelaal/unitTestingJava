@@ -29,8 +29,9 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Test with correct email and password")
     void testLoginValidUser() throws NotValidMailException {
-        String input = "t1@gmail.com\npass1\n";
+        String input = "t1@gmail.com\npass1\n5\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -47,11 +48,51 @@ class UserControllerTest {
 
         String printedOutput = outContent.toString();
         assertTrue(printedOutput.contains("Welcome user1"));    }
-
     @Test
+    @DisplayName("Test with correct email and wrong password")
+    void testLoginCorrectEmailWrongPassword() throws NotValidMailException {
+        String input = "t1@gmail.com\npass11\n5\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        userController userController = new userController();
+
+        List<user> userList = List.of(
+                new user("user1", "t1@gmail.com", "pass1"),
+                new user("user2", "t2@gmail.com", "pass2")
+        );
+        userController.setUserList(userList);
+        userController.login();
+
+        String printedOutput = outContent.toString();
+        assertFalse(printedOutput.contains("Welcome user1"));    }
+    @Test
+    @DisplayName("Test with wrong email and correct password")
+    void testLoginWrongEmailCorrectPassword() throws NotValidMailException {
+        String input = "t11@gmail.com\npass1\n5\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        userController userController = new userController();
+
+        List<user> userList = List.of(
+                new user("user1", "t1@gmail.com", "pass1"),
+                new user("user2", "t2@gmail.com", "pass2")
+        );
+        userController.setUserList(userList);
+        userController.login();
+
+        String printedOutput = outContent.toString();
+        assertFalse(printedOutput.contains("Welcome user1"));    }
+    @Test
+    @DisplayName("Test with wrong email and wrong password")
     void testLoginInvalidUserLogin() {
         // Prepare test input
-        String input = "invalid-email\ninvalid-pass\n";
+        String input = "invalid-email\ninvalid-pass\n5\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -69,7 +110,7 @@ class UserControllerTest {
     @Test
     void testSignUpValidUser() throws NotValidMailException {
         // Prepare test input
-        String input = "t3@gmail.com\npass3\nUser3\nt3@gmail.com\npass3\n";
+        String input = "t3@gmail.com\npass3\nUser3\nt3@gmail.com\npass3\n5\n";
         ByteArrayInputStream inputStream = new ByteArrayInputStream(input.getBytes());
         System.setIn(inputStream);
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -86,6 +127,7 @@ class UserControllerTest {
         // Check the output
         String printedOutput = outContent.toString();
         assertTrue(printedOutput.contains("Welcome User3"));
+        assertEquals(1,userController.getUserList().size());
     }
     @Test
     void testSignUpInvalidUserSignUp() {
