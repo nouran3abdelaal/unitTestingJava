@@ -1,6 +1,7 @@
 package org.example.user;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class userController {
     private List<user> userList;
@@ -104,85 +105,108 @@ public class userController {
 
         } else if (option.equals("2")) {
             System.out.println("Please enter the account ID");
-            String ID = scanner.nextLine();
-            Optional<account>account =  user.getAccountset().stream().filter(a->(a.getID()+"").equals(ID)).findAny();
-            if(!account.isPresent()){
-                System.out.println("You don't have an account with this ID please recheck and try again");
-                bankServices(user);
-            }
-            else {
-                System.out.println("Please enter the Amount");
-                String amount = scanner.nextLine();
-                user.getAccountset().stream().forEach(e->{
-                    if((e.getID()+"").equals(ID)){
-                        System.out.println("here\n" +
-                                e.getAccountBalance());
-                        e.setAccountBalance(e.getAccountBalance()+Double.parseDouble(amount));
-                        System.out.println("here\n" +
-                                e.getAccountBalance());
-                    }
-                });
-                user.getAccountset().forEach(account1 -> {
-                    System.out.println(account1.toString());
-                });
-                bankServices(user);
-
-            }
+            DepositService(user);
+            bankServices(user);
 
 
         } else if (option.equals("3")) {
             System.out.println("Please enter the account ID");
-            String ID = scanner.nextLine();
-            Optional<account>account =  user.getAccountset().stream().filter(a->(a.getID()+"").equals(ID)).findAny();
-            if(!account.isPresent()){
-                System.out.println("You don't have an account with this ID please recheck and try again");
-                bankServices(user);
-            }
-            else {
-                System.out.println("Please enter the Amount");
-                account account1 = account.get();
-
-                String amount = scanner.nextLine();
-                if(Double.parseDouble(amount)>account1.getAccountBalance()) {
-                    System.out.println("The amount entered greater that your current balance please try again!");
-                    bankServices(user);
-                }
-                else {
-                    user.getAccountset().stream().forEach(e->{
-                        if((e.getID()+"").equals(ID)){
-                            e.setAccountBalance(e.getAccountBalance()-Double.parseDouble(amount));
-                        }
-                    });
-                }
-                bankServices(user);
-            }
-
-
+            withdrawService(user);
+            bankServices(user);
 
         }
         else if (option.equals("4")) {
-            boolean flag = true;
-            while (flag){
-                System.out.println("Please choose the account Type:-\n" +
-                        "Write C for Current\n" +
-                        "Write S for Saving");
-                String type = scanner.nextLine().trim().toUpperCase();
-                if(type.equals("C")|| type.equals("S")){
-                    flag = false;
-                    type = type.equals("S")?"Saving":"Current";
-                    account newAccount = new account(type,user.getID(),0);
-                    user.getAccountset().add(newAccount);
-
-                }
-            }
-
-
+            createAccount(user);
+            bankServices(user);
 
         }
         else if(option.equals("5")){
+            System.out.println("Thanks for using our services");
         }
 
+    }
 
+    private void createAccount(user user) {
+        boolean flag = true;
+        while (flag){
+            System.out.println("Please choose the account Type:-\n" +
+                    "Write C for Current\n" +
+                    "Write S for Saving");
+            String type = scanner.nextLine().trim().toUpperCase();
+            if(type.equals("C")|| type.equals("S")){
+                flag = false;
+                type = type.equals("S")?"Saving":"Current";
+                account newAccount = new account(type,user.getID(),0);
+                user.getAccountset().add(newAccount);
+
+            }
+        }
+    }
+
+    public void withdrawService(user user) {
+        String ID = scanner.nextLine();
+        Optional<account>account =  user.getAccountset().stream().filter(a->(a.getID()+"").equals(ID)).findAny();
+        if(!account.isPresent()){
+            System.out.println("You don't have an account with this ID please recheck and try again");
+        }
+        else {
+            System.out.println("Please enter the Amount");
+            account account1 = account.get();
+
+            String amount = scanner.nextLine();
+            if(Double.parseDouble(amount)>account1.getAccountBalance()) {
+                System.out.println("The amount entered greater that your current balance please try again!");
+            }
+            else {
+//               List<account> temp =
+                user.setAccountset(
+                       user.getAccountset().stream().map(e->{
+                    if((e.getID()+"").equals(ID)){
+                        e.setAccountBalance(e.getAccountBalance()-Double.parseDouble(amount));
+                    }
+                    System.out.println(e.toString());
+
+                        return e;
+
+                }).collect(Collectors.toSet()));
+            }
+//                user.getAccountset().stream()
+//                        .map(existingEmployee -> {
+//                            if ((existingEmployee.getID()+"").equals(ID)) {
+//
+//                                return employee;
+//                            } else {
+//                                return existingEmployee;
+//                            }
+//                        }).collect(Collectors.toList());
+        }
+
+    }
+
+    public void DepositService(user user){
+        String ID = scanner.nextLine();
+        Optional<account>account =  user.getAccountset().stream().filter(a->(a.getID()+"").equals(ID)).findAny();
+        if(!account.isPresent()){
+            System.out.println("You don't have an account with this ID please recheck and try again");
+        }
+        else {
+            System.out.println("Please enter the Amount");
+            String amount = scanner.nextLine();
+            user.setAccountset(
+                    user.getAccountset().stream().map(e->{
+                        if((e.getID()+"").equals(ID)){
+                            e.setAccountBalance(e.getAccountBalance()+Double.parseDouble(amount));
+                        }
+                        System.out.println(e.toString());
+
+                        return e;
+
+                    }).collect(Collectors.toSet()));
+            user.getAccountset().forEach(account1 -> {
+                System.out.println(account1.toString());
+            });
+
+        }
 
     }
 
